@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stats"></div>
+    <div id="three"></div>
+    <script src="./three.js"></script>
+    <script src="./stats.min.js"></script>
+    <script>
+      //设置场景
+      const scene = new THREE.Scene();
+      //设置相机，这里是设置透视相机，参数分别为（视角，宽高比例，近聚点，远聚点）
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      //设置相机的位置
+      camera.position.x = -30;
+      camera.position.y = 40;
+      camera.position.z = 30;
+      //让相机指向场景的中央
+      camera.lookAt(scene.position);
+
+      
+
+      //设置绘制对象，基于webGL的渲染器，还有基于canvas和svg等等
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      //添加阴影
+      renderer.shadowMapEnabled = true;
+
+      //设置平面
+      //设置平面宽高和平面的宽高段数，宽高段数可以使平面更加精细，具体怎么调不清楚
+      const planeGeometry = new THREE.PlaneGeometry(70, 50, 1, 1);
+      //设置平面材质，这里只设置了颜色
+      const planeMeterial = new THREE.MeshLambertMaterial({ color: 0xcccccc });
+      //创建平面
+      const plane = new THREE.Mesh(planeGeometry, planeMeterial);
+
+      //设置平面的旋转角度和定位
+      plane.rotation.x = -0.5 * Math.PI;
+      plane.position.x = 15;
+      plane.position.y = 0;
+      plane.position.z = 0;
+      //打开地面阴影
+      plane.receiveShadow = true;
+      //添加平面
+      scene.add(plane);
+
+      //光源，这里使用环境光
+      const ambientLight = new THREE.AmbientLight(0x0c0c0c);
+      scene.add(ambientLight);
+
+      //光源，这里是点光源
+      const spotLight = new THREE.SpotLight(0xffffff);
+      //设置点光源的位置
+      spotLight.position.set(-40, 60, -10);
+      //设置光源可以生产阴影
+      spotLight.castShadow = true;
+      //把点光源增加到场景中
+      scene.add(spotLight);
+
+      //增加方块
+      const addCube = () => {
+        //设置平面（宽，高，深度，宽段数，高段数，深度段数）；
+        const cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
+        //设置立方体材质，这里设置了颜色和显示线框
+        const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+        //创建立方体
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        //设置立方体的位置
+        cube.position.x = -30 + Math.round(Math.random() * planeGeometry.parameters.width);
+        cube.position.y = Math.round(Math.random() * 5);;
+        cube.position.z = -20 + Math.round(Math.random() * planeGeometry.parameters.height);
+        //打开立方体的阴影
+        cube.castShadow = true;
+        //添加立方体
+        scene.add(cube);
+      };
+      //增加雾化效果(颜色，近距离，远距离)
+      scene.fog = new THREE.Fog(0xffffff, 0.0005, 100);
+      //使用材质覆盖属性
+      scene.overrideMaterial = new THREE.MeshLambertMaterial({color:0x00ff00});
+
+      //动画
+      const render = () => {
+        addCube();
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+      };
+
+      //将renderer的输出挂在到元素中
+      document.getElementById("three").appendChild(renderer.domElement);
+
+      render();
+
+    </script>
+  </body>
+</html>
