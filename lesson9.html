@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stats"></div>
+    <div id="three"></div>
+    <script src="./three.js"></script>
+    <script src="./common.js"></script>
+    <script>
+      const commonObj = common();
+      const { scene, camera, plane, renderer } = commonObj;
+
+      const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+      cube.castShadow = true;
+      cube.position.set(0,6,0);
+      scene.add(cube);
+
+      const sphereGeometry = new THREE.SphereGeometry(4,20,30);
+      const sphereMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.set(20,6,0);
+      scene.add(sphere);
+
+      camera.position.set(-25, 30, 25);
+      camera.lookAt(plane.position);
+
+      //点光源
+      const pointLight = new THREE.PointLight(0xffffff);
+      pointLight.position.set(-40, 60, -10);
+
+      scene.add(pointLight);
+
+      const render = () => {
+          //让点光源沿z轴移动查看立方体表面颜色变化
+          pointLight.position.z += 0.2;
+          renderer.render(scene, camera);
+          requestAnimationFrame(render);
+      }
+
+      render();
+      document.getElementById("three").appendChild(renderer.domElement);
+    </script>
+  </body>
+</html>
