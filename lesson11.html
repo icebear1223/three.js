@@ -26,38 +26,48 @@
       const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
       cube.castShadow = true;
-      cube.position.set(0,6,0);
+      cube.position.set(0, 6, 0);
       scene.add(cube);
 
-      const sphereGeometry = new THREE.SphereGeometry(4,20,30);
-      const sphereMaterial = new THREE.MeshLambertMaterial({color:0x7777ff});
+      const sphereGeometry = new THREE.SphereGeometry(4, 20, 30);
+      const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x7777ff });
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      sphere.position.set(-10,6,0);
+      sphere.position.set(-10, 4, 0);
       sphere.castShadow = true;
       scene.add(sphere);
 
       camera.position.set(-25, 30, 25);
-      camera.lookAt(plane.position);
+      camera.lookAt(scene.position);
 
-      //聚光灯光源
-      const spotLight = new THREE.SpotLight(0xffffff);
-      spotLight.position.set(-40, 60, -10);
-      //设置光照方向为球体的方向
-      spotLight.target = sphere;
-      spotLight.castShadow = true;
+      //环境
+      const ambiLight = new THREE.AmbientLight(0x1c1c1c);
+      scene.add(ambiLight);
 
-      scene.add(spotLight);
-      // let step = 0
-      // const render = () => {
-      //     //让聚光灯光源的光照角度发生变化
-      //     step += 1;
-      //     spotLight.angle = Math.PI / step;
-      //     renderer.render(scene, camera);
-      //     requestAnimationFrame(render);
-      // }
+      const target = new THREE.Object3D();
+      target.position.set(50, 0, 0);
 
-      // render();
+      //平行光光源
+      const directionalLight = new THREE.DirectionalLight(0xffffff);
+      directionalLight.position.set(-40, 60, -11);
+      directionalLight.castShadow = true;
+
+      directionalLight.shadow.camera.far = 2000;
+      directionalLight.shadow.camera.near = 3;
+
+      directionalLight.intensity = 0.5;
+
+      directionalLight.shadow.mapSize.width = 2000;
+      directionalLight.shadow.mapSize.height = 1000;
+
+      directionalLight.target = target;
+      //这里是添加平行光辅助功能
+      var helper = new THREE.DirectionalLightHelper(directionalLight, 5);
+
+      scene.add(helper);
+
+      scene.add(directionalLight);
       renderer.render(scene, camera);
+
       document.getElementById("three").appendChild(renderer.domElement);
     </script>
   </body>

@@ -11,10 +11,11 @@ const common = () => {
     const renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
 
     //设置平面
     //设置平面宽高和平面的宽高段数，宽高段数可以使平面更加精细，具体怎么调不清楚
-    const planeGeometry = new THREE.PlaneGeometry(70, 50, 1, 1);
+    const planeGeometry = new THREE.PlaneGeometry(40, 25, 1, 1);
     //设置平面材质，这里只设置了颜色
     const planeMeterial = new THREE.MeshLambertMaterial({ color: 0xcccccc });
     //创建平面
